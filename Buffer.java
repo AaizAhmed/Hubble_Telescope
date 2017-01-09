@@ -37,7 +37,7 @@ public class Buffer extends Thread {
 		}
 		catch (InterruptedException e) 
 		{ 		          
-			System.out.println(  "Buffer thread is interepted when it is  sleeping.\n" + e.getMessage() ); 
+			System.out.println( "Buffer thread is interepted when it is  sleeping.\n" + e.getMessage() ); 
 		} 
 	} 
 
@@ -74,16 +74,18 @@ public class Buffer extends Thread {
 		return false;
 	}
 
-	synchronized public void waitForData() {
+	synchronized public boolean waitForData() {
 
 		try {
 
-			while ( B.size() < size/2 ) wait()  ;
+			while ( B.size() < size/2 ) { wait(); System.out.print(B.size());return true; }
 		} 
 		catch ( InterruptedException e ) {
 
 			System.out.println("Hmm... an interrupt!") ;      
 		}
+		
+		return false;
 	}
 
 	synchronized public boolean isEmpty() {

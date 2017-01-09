@@ -57,7 +57,7 @@ public class Image {
 //      //Set values of N and T
 //      int N=512;
 //      int T=1000;
-//      Random rand = new Random ( System.currentTimeMillis() ) ;
+//      Random rand = new Random ( System.current/Millis() ) ;
 //
 //      //Create List
 //      ArrayList<Integer> buffer = new ArrayList<Integer>() ;

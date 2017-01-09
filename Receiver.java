@@ -10,62 +10,98 @@ import java.util.ArrayList;
 
 public class Receiver extends Thread {
 	
-	Buffer buf;
-	private ArrayList<Integer> B2;	
-	public boolean keepRunning ;
+	Buffer buff;
+	private ArrayList<Integer> received;
+	private ArrayList<Integer> test;	
+	public boolean keepRunning;
+	private int size;
 	
 	/**
 	 * Constructor: 
 	 * @param buffer
 	 */
-	public Receiver (Buffer b) {
+	public Receiver (Buffer b, int size) {
 		
-		buf = b;
-		B2 = new ArrayList<Integer> ();
+		buff = b;
+		this.size = size;
+		received = new ArrayList<Integer> (size);	
+		test = new ArrayList<Integer> (size);	
+		keepRunning = true;
 	}
 	
-	public void run () {		
-	
-		try {
-				
-			keepRunning = true;
-
-			while (keepRunning) {		
-
-				buf.waitForData(); 			
-
-				if (buf.isFull() ) { 
-
-					removeB1(); 
-					keepRunning = false;				
+	public void run () {	
+		
+		while(keepRunning)
+		{
+			try
+			{
+				if (buff.elements() >= size/2)
+				{					
+					removeFromBuffer();
 				}
-
-				Thread.sleep(0);
+				else
+				{	synchronized (buff){
+						buff.notify();
+						Thread.sleep(0);
+					}					
+				}
 			}
-
-			System.out.println("Finished Receiver: \n");
+			catch (InterruptedException e) 
+			{				
+				System.out.println("Receiver thread interepted while sleepying.\n" + e.getMessage());
+			} 
 		}
-		catch (InterruptedException e) {
-			
-			System.out.println("Receiver thread interepted while sleepying.\n" + e.getMessage());
-		} 
 	}
 	
 	/**
 	 * Adding the data to the 2nd buffer and removing from the first one.
 	 */
-	public void removeB1 () {		
+	public void removeFromBuffer () {		
 		
-		for (int i = 0; i < buf.size()/2; i++) {	
+		for (int i = 0; i < buff.size()/2; i++) {	
 		
-			int number = buf.getBuffer().get(i);
-			buf.remove(i);
-			B2.add(number);
+			int number = buff.getBuffer().get(i);
+			buff.remove(i);
+			received.add(number);
 			
-		//	System.out.println("Buffer element at " + i + " is " + buf.getBuffer().get(i));				
+			System.out.println("Buffer element at " + i + " is " + received.get(i));				
 	   
 		}		
 	}
 	
-	public ArrayList<Integer> getB2 () { return B2; }
+	public void removeFromTest () {
+		
+		for (int i = 0; i < test.size(); i++)
+		{
+			int number = test.get(i);
+			test.remove(i);
+			received.add(number);
+			
+			System.out.println("Buffer element at " + i + " is " + received.get(i));
+		}
+	}
+	
+	public void addToTest (int i)
+	{
+		test.add(i);
+	}
+	
+	public void interept() {	keepRunning = false; 	}
+	
+	public ArrayList<Integer> getBuffer () { return received; }
+	
+	public static void main (String[] args) {
+		
+		Buffer buff = new Buffer(1);
+		Receiver r = new Receiver (buff, 10);
+		
+		for (int i = 0; i < 10; i++) {
+			
+			r.addToTest(i);
+		}		
+		
+		r.start();
+				
+		//r.interept();		
+	}
 }

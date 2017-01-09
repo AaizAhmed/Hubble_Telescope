@@ -7,13 +7,12 @@
  */
 package project5;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.*;
+
+@SuppressWarnings("unchecked")
 
 public class Processing extends Thread {
 
-	Buffer buf;
-	public ArrayList<Integer> data = new ArrayList<Integer>();;	
 	public ArrayList<Integer> normalized; 
 	private int limit;
 	ForkJoinPool manager = new ForkJoinPool();
@@ -95,7 +94,7 @@ public class Processing extends Thread {
 		int j;
 
 		for( int p = 1; p < data2.size(); p++ )
-		{
+		{			
 			AnyType tmp = (AnyType) data2.get(p);
 			for( j = p; j > 0 && tmp.compareTo( (AnyType) data2.get(j - 1)  ) < 0; j-- )
 				data2.set(j , data2.get(j - 1) );
@@ -117,10 +116,8 @@ public class Processing extends Thread {
 			
 			index = (int) ( (b - a)*(value - min) ) / (max- min) + a;
 			
-			normalized.add(index);
-			
-		}	
-		
+			normalized.add(index);			
+		}			
 	}
 	
 	public void createImage(int N , int T) {
