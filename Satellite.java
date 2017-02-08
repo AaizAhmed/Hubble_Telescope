@@ -7,45 +7,51 @@
  */
 package project5;
 
+import java.awt.*;
 import java.util.Random;
+import javax.swing.*;
 
 public class Satellite extends Thread {	
 
 	private Random rand = new Random();	
 	int randomInt;
-	Buffer buff;
-	private boolean keepRunning;
-	
+	Buffer B1;
+	public boolean keepRunning;
+
 	/**
 	 * Constructor: Builds up the object.
 	 * @param buffer
 	 */
-	Satellite (Buffer b) 
-	{		buff = b;
+	Satellite (Buffer b) {			
+
+		B1 = b;
 	}
 
-	public void run() 
-	{		
-		while (true) 
-		{
-			try 
-			{
-				if (!buff.isFull())
-				{
-					randomInt = rand.nextInt(4097);
-					//System.out.println("Adding: " + randomInt);
-					buff.add( randomInt );
-				}						
+	public void run() {
+
+		try {
+
+			keepRunning = true ;  
+
+			while (true) 
+			{ 
+				B1.waitForSpace() ;
+				randomInt = rand.nextInt(4097);
+				B1.add( randomInt);
+				
+				//System.out.println("Inside Satellite: " + randomInt);						
+
+				Thread.sleep (0);
 			}
-			catch (InterruptedException e)
-			{
-				System.out.println("Satellite thread interepted while sleepying.\n" + e.getMessage());
-			}
-		}		
+
+			//System.out.println("Finished Satellite: \n");
+		}	
+		catch (InterruptedException e) {
+
+			System.out.println("Satellite thread interepted while sleepying.\n" + e.getMessage());
+		} 
 	}
-	
-	public void interept() {	keepRunning = false; 	}
-	
-	public int getRandomInt () {	return randomInt;	}
+
+	public int getRandomInt () { return randomInt;	}
 
 }

@@ -8,79 +8,102 @@
 package project5;
 import java.util.ArrayList;
 
-public class Buffer extends Thread 
-{
+public class Buffer extends Thread {
+
 	private ArrayList<Integer> B;	
 	private int N = 256, size = 2 * (N*N);  
 
 	/**
 	 * Default constructor, N = size	
 	 */
-//	public Buffer () 
-//	{	B = new ArrayList<Integer>(size);	}
+	public Buffer () {
 
-	public Buffer (int i) 
-	{
-//		N = (int) Math.pow(2, i);
-//		size = 2 * (N*N);
-		size = i;
+		B = new ArrayList<Integer>(size);
+
+	}
+
+	public Buffer (int i) {
+
+		N = (int) Math.pow(2, i);
+		size = 2 * (N*N);
 		B = new ArrayList<Integer>(size);		
 	}
 
-	public void run () 
-	{
+	public void run () {
+
 		try 
 		{
 			Thread.sleep(0); 			
 		}
 		catch (InterruptedException e) 
 		{ 		          
-			System.out.println( "Buffer thread is interepted when it is  sleeping.\n" + e.getMessage() ); 
+			System.out.println(  "Buffer thread is interepted when it is  sleeping.\n" + e.getMessage() ); 
 		} 
 	} 
 
-	synchronized public int size () { return size; }
+	public synchronized int size () { return size; }
 
-	synchronized public int elements() { return B.size(); }
+	public synchronized int elements() { return B.size(); }
 
-	public synchronized void add (int data) throws InterruptedException 
-	{
-//		while (B.size() == size)
-//		{	wait();		}
-		System.out.println( "Adding in buff: " + data );
-		B.add (data);  
-		//notify();
+	public synchronized void add (int data) {
+
+		if (B.size() < size) { 
+
+			B.add (data);  
+			 
+		}
+		notify();
+
 	}
 
-	public synchronized ArrayList<Integer> getBuffer () 
-	{
-		System.out.println( B );
-		return B;
-	}
+	public synchronized ArrayList<Integer> getBuffer () { return B; }
 
-	public synchronized void remove (int index) throws InterruptedException 
-	{
-		if ( B.size() >= size/2) notify();
-		
-		while(B.size() < size/2)
-		{	wait();		}
-		
-		if ( B.get(index) != null ) B.remove(index);  
-		//notify();		
-	  	
+	public synchronized void remove (int index) { 		
+
+		if (B.get(index) != null) {	
+
+			B.remove(index);  
+			notify();		
+		}  		
+
 	}	
 
-	synchronized public boolean isFull() {
+	public synchronized boolean isFull() {
 
 		if (B.size() >= size) { return true; }
 
 		return false;
 	}
-
-	synchronized public boolean isEmpty() {
+	
+	public synchronized boolean isEmpty() {
 
 		return B.isEmpty() ;
 	}
+
+	public synchronized void waitForData() {
+
+		try {
+
+			while ( B.size() < size/2 ) wait()  ;
+		} 
+		catch ( InterruptedException e ) {
+
+			System.out.println("Hmm... an interrupt!") ;      
+		}
+	}	
+
+	public synchronized void waitForSpace() {
+
+		try {
+
+			while ( B.size() >= size ) wait() ;
+		} 
+		catch ( InterruptedException e ) {
+
+			System.out.println("Hmm... an interrupt!") ;      
+		}
+	}
+
 
 }
 

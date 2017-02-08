@@ -7,78 +7,89 @@
  */
 package project5;
 
-//-----------------------------------------------------------------
-//http://www.programcreek.com/2009/02/notify-and-wait-example/
-//-----------------------------------------------------------------
-
 public class Project5 {
-	
+
 	public static void main (String [] args) {
 
-	  int run = 1;
-	  System.out.println ("Available processors (cores): " + Runtime.getRuntime().availableProcessors());
-	  System.out.println ("Available memory (bytes): " + Runtime.getRuntime().freeMemory() + "\n");
-	  
-	  for (int x = 8; x < 9; x++) {
-			
-		Buffer buf = new Buffer (x); 
-		buf.start();
-		
-	    Satellite sat = new Satellite (buf);      
-	    sat.start();
-	 
-	    for (int y = 1; y < 2; y++) {	    
-	    	
-	     Receiver rec = new Receiver (buf);		    
-	     rec.start();
-	      
-	      Processing process = new Processing ();
-	      
-	      try {
-	    	  
-	         // Wait for receiver to finish	         
-	         rec.join() ;	         
+		int run = 1;
+		System.out.println ("Available processors (cores): " + Runtime.getRuntime().availableProcessors());
+		System.out.println ("Available memory (bytes): " + Runtime.getRuntime().freeMemory() + "\n");
 
-	      } catch ( InterruptedException e ) {
-	         System.out.println("Oh look! an exception!") ;
-	      }  
-	      
-//	      System.out.println ("Before displaying Buffer 2 elements" );
-	      
-	      System.out.println ("Run #" + run + ": i=" + x + ",j=" + y + ",N=" + (int) Math.pow(2, x)+
-	    		               ",B1="+ buf.size() + ",B2=" + buf.size()/2 +",T=" + (int) Math.pow(10, y));
-	      
-	      if (rec.getBuffer().size() > 0) {
-	    	
-	      long t1 = System.currentTimeMillis();
-	      
-	      process.mergeSort (rec.getBuffer(), (int) Math.pow(10, y));
-	      long t2 = System.currentTimeMillis();
-	      System.out.println ("Time mergesort: "+ (t2-t1) +"ms");
-	      
-	      process.normalize(rec.getBuffer());	
-	      }
-	      
-	      /* To display the sorted values in the second buffer for testing
+		for (int x = 8; x < 9; x++) {
+
+			Buffer buf = new Buffer (x); 
+			buf.start();
+
+			Satellite sat = new Satellite (buf);      
+			sat.start();
+
+			for (int y = 1; y < 3; y++) {	    
+
+				Receiver rec = new Receiver (buf);		    
+				rec.start();
+
+				Processing process = new Processing ();
+				//process.start();
+
+				try 
+				{	    	           
+					rec.join(); // Wait for receiver to finish	         
+				} 
+				catch (InterruptedException e ) 
+				{
+					System.out.println("Thread Interrupted: " + e.getMessage() );
+				}				
+
+				System.out.printf("Run #%d, i=%d, j=%d, N=%d, B1=%d, B2=%d, T=%d\n", run, x, y, 
+						(int) Math.pow(2, x), buf.size(), buf.size()/2, (int) Math.pow(10, y));
+
+				if (rec.getB2().size() > 0) {
+
+					long time = System.currentTimeMillis();
+					
+					process.mergeSort (rec.getB2(), (int) Math.pow(10, y));					
+					
+					time = System.currentTimeMillis() - time;
+					
+					System.out.println ("Time mergesort: "+ time +"ms");
+
+					process.normalize(rec.getB2());	
+				}
+
+				/* To display the sorted values in the second buffer for testing
 	      for (int i = 0; i < process.normalized.size(); i++) {  
-	    	 
+
 	    	  System.out.println (rec.getB2().get(i) );  	 
-	    	  
+
 	      } */
-	      
-//	        System.out.println ("Yes Done!");
-//			System.out.println ("Normalized:\n");
-			
-			process.createImage((int) Math.pow(2, x), (int) Math.pow(10, y)); 
-			
-//			System.out.println ("Image Created:\n");
-			System.out.println ("Saving image: output_N" + Math.pow(2, x) +"_T" + Math.pow(10, y) + ".jpg\n");
-			run++;			
-	    }
-	    		//Stopping/finishing the execution Satellite thread
-		         //sat.keepRunning = false;	       
-		         sat.stop(); 		         
-	  }
+
+				//	        System.out.println ("Yes Done!");
+				//			System.out.println ("Normalized:\n");
+
+				//process.createImage((int) Math.pow(2, x), (int) Math.pow(10, y)); 
+				
+				try 
+				{
+					process.join();					
+				} 
+				catch (InterruptedException e) 
+				{					
+					e.printStackTrace();
+				}
+				
+				process.stop();
+				//process.keepRunning = false;
+				
+				System.out.println ("Saving image: images/output_N" + Math.pow(2, x) +"_T" + Math.pow(10, y) + ".jpg\n");
+				run++;			
+			}
+
+			//Stopping the Satellite thread
+			//sat.keepRunning = false;				
+		}
+		
+		System.out.println("Do I run?");
+		System.exit(0);
 	}
 
 }
