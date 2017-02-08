@@ -16,10 +16,9 @@ public class Buffer extends Thread {
 	/**
 	 * Default constructor, N = size	
 	 */
-	public Buffer () {
-
+	public Buffer () 
+	{
 		B = new ArrayList<Integer>(size);
-
 	}
 
 	public Buffer (int i) {
@@ -45,27 +44,25 @@ public class Buffer extends Thread {
 
 	public synchronized int elements() { return B.size(); }
 
-	public synchronized void add (int data) {
-
-		if (B.size() < size) { 
-
-			B.add (data);  
-			 
-		}
-		notify();
-
+	public synchronized void add (int data) 
+	{
+		if (B.size() < size) 
+		{	
+			B.add (data);
+			notify();
+		}		
 	}
 
 	public synchronized ArrayList<Integer> getBuffer () { return B; }
 
-	public synchronized void remove (int index) { 		
-
-		if (B.get(index) != null) {	
-
-			B.remove(index);  
+	public synchronized void remove (int index) 
+	{
+		if (B.get(index) != null) 
+		{
+			//B.set(index, null); 
+			B.remove(index);
 			notify();		
-		}  		
-
+		} 
 	}	
 
 	public synchronized boolean isFull() {
@@ -82,8 +79,8 @@ public class Buffer extends Thread {
 
 	public synchronized void waitForData() {
 
-		try {
-
+		try 
+		{
 			while ( B.size() < size/2 ) wait()  ;
 		} 
 		catch ( InterruptedException e ) {
@@ -94,8 +91,8 @@ public class Buffer extends Thread {
 
 	public synchronized void waitForSpace() {
 
-		try {
-
+		try 
+		{
 			while ( B.size() >= size ) wait() ;
 		} 
 		catch ( InterruptedException e ) {

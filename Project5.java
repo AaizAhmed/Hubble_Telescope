@@ -15,25 +15,35 @@ public class Project5 {
 		System.out.println ("Available processors (cores): " + Runtime.getRuntime().availableProcessors());
 		System.out.println ("Available memory (bytes): " + Runtime.getRuntime().freeMemory() + "\n");
 
-		for (int x = 8; x < 9; x++) {
+		for (int x = 9; x < 10; x++) {
 
 			Buffer buf = new Buffer (x); 
 			buf.start();
 
-			Satellite sat = new Satellite (buf);      
-			sat.start();
+			Satellite sat = new Satellite (buf);
+			
+			long timeA = System.currentTimeMillis();			
+			sat.start();			
+			timeA = System.currentTimeMillis() - timeA;			
+			System.out.println ("Time adding: "+ timeA +" ms");
+			
 
-			for (int y = 1; y < 3; y++) {	    
+			for (int y = 1; y < 6; y++) {	    
 
-				Receiver rec = new Receiver (buf);		    
-				rec.start();
-
+				Receiver rec = new Receiver (buf);	
+				
+				long timeD = System.currentTimeMillis();			
+				rec.start();			
+				
+				
 				Processing process = new Processing ();
-				//process.start();
 
 				try 
 				{	    	           
-					rec.join(); // Wait for receiver to finish	         
+					rec.join(); // Wait for receiver to finish	
+					
+					timeD = System.currentTimeMillis() - timeD;			
+					System.out.println ("Time deleting: "+ timeD +" ms\n");
 				} 
 				catch (InterruptedException e ) 
 				{
@@ -43,15 +53,12 @@ public class Project5 {
 				System.out.printf("Run #%d, i=%d, j=%d, N=%d, B1=%d, B2=%d, T=%d\n", run, x, y, 
 						(int) Math.pow(2, x), buf.size(), buf.size()/2, (int) Math.pow(10, y));
 
-				if (rec.getB2().size() > 0) {
-
-					long time = System.currentTimeMillis();
-					
-					process.mergeSort (rec.getB2(), (int) Math.pow(10, y));					
-					
-					time = System.currentTimeMillis() - time;
-					
-					System.out.println ("Time mergesort: "+ time +"ms");
+				if (rec.getB2().size() > 0) 
+				{
+					long time = System.currentTimeMillis();					
+					process.mergeSort (rec.getB2(), (int) Math.pow(10, y));						
+					time = System.currentTimeMillis() - time;					
+					System.out.println ("Time mergesort: "+ time +" ms");
 
 					process.normalize(rec.getB2());	
 				}
@@ -77,7 +84,7 @@ public class Project5 {
 					e.printStackTrace();
 				}
 				
-				process.stop();
+				//process.stop();
 				//process.keepRunning = false;
 				
 				System.out.println ("Saving image: images/output_N" + Math.pow(2, x) +"_T" + Math.pow(10, y) + ".jpg\n");

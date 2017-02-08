@@ -46,8 +46,7 @@ public class Processing extends Thread {
 		}
 
 		ArrayList<Integer> tmpList = new ArrayList<Integer>(list.size());
-		manager.invoke(new SortTask(list, tmpList, first, last));
-		
+		manager.invoke(new SortTask(list, tmpList, first, last));		
 		manager.shutdown();
 	}
 

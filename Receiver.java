@@ -34,8 +34,8 @@ public class Receiver extends Thread {
 
 				buf.waitForData(); 			
 
-				if (buf.isFull() ) { 
-
+				if (buf.isFull() ) 
+				{
 					removeB1(); 
 					keepRunning = false;				
 				}
@@ -56,13 +56,13 @@ public class Receiver extends Thread {
 	 */
 	public void removeB1 () {		
 
-		for (int i = 0; i < buf.size()/2; i++) {	
-
+		for (int i = 0; i < buf.size()/2; i++) 
+		{
 			int number = buf.getBuffer().get(i);
 			buf.remove(i);
 			B2.add(number);
 
-			//	System.out.println("Buffer element at " + i + " is " + buf.getBuffer().get(i));				
+			//System.out.println("Buffer element at " + i + " is " + buf.getBuffer().get(i));				
 
 		}		
 	}
