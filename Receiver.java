@@ -9,42 +9,31 @@ package project5;
 import java.util.ArrayList;
 
 public class Receiver extends Thread {
-	
+
 	Buffer buff;
 	private ArrayList<Integer> received;
-	private ArrayList<Integer> test;	
+
 	public boolean keepRunning;
-	private int size;
-	
+
 	/**
 	 * Constructor: 
 	 * @param buffer
 	 */
-	public Receiver (Buffer b, int size) {
-		
+	public Receiver (Buffer b) 
+	{		
 		buff = b;
-		this.size = size;
-		received = new ArrayList<Integer> (size);	
-		test = new ArrayList<Integer> (size);	
+		received = new ArrayList<Integer> ();			
 		keepRunning = true;
 	}
-	
-	public void run () {	
-		
-		while(keepRunning)
+
+	public void run () 
+	{		
+		while(true)
 		{
 			try
-			{
-				if (buff.elements() >= size/2)
-				{					
-					removeFromBuffer();
-				}
-				else
-				{	synchronized (buff){
-						buff.notify();
-						Thread.sleep(0);
-					}					
-				}
+			{				
+				removeFromBuffer();	
+				Thread.sleep(0);			
 			}
 			catch (InterruptedException e) 
 			{				
@@ -52,56 +41,41 @@ public class Receiver extends Thread {
 			} 
 		}
 	}
-	
+
 	/**
 	 * Adding the data to the 2nd buffer and removing from the first one.
+	 * @throws InterruptedException 
 	 */
-	public void removeFromBuffer () {		
+	public void removeFromBuffer () throws InterruptedException 
+	{
+		System.out.println(buff.getBuffer());
 		
-		for (int i = 0; i < buff.size()/2; i++) {	
-		
+		if ( !buff.isEmpty() )
+		for (int i = 0; i < buff.size()/2; i++) 
+		{
 			int number = buff.getBuffer().get(i);
+			
+			System.out.println("Removing: " + number);
+			
 			buff.remove(i);
 			received.add(number);
-			
-			System.out.println("Buffer element at " + i + " is " + received.get(i));				
-	   
-		}		
-	}
-	
-	public void removeFromTest () {
-		
-		for (int i = 0; i < test.size(); i++)
-		{
-			int number = test.get(i);
-			test.remove(i);
-			received.add(number);
-			
-			System.out.println("Buffer element at " + i + " is " + received.get(i));
+
+			//System.out.println("Buffer element at " + i + " is " + received.get(i));
 		}
+
 	}
-	
-	public void addToTest (int i)
-	{
-		test.add(i);
-	}
-	
+
 	public void interept() {	keepRunning = false; 	}
-	
+
 	public ArrayList<Integer> getBuffer () { return received; }
-	
-	public static void main (String[] args) {
-		
-		Buffer buff = new Buffer(1);
-		Receiver r = new Receiver (buff, 10);
-		
-		for (int i = 0; i < 10; i++) {
-			
-			r.addToTest(i);
-		}		
-		
-		r.start();
-				
-		//r.interept();		
-	}
+
+	//	public static void main (String[] args) 
+	//	{		
+	//		Buffer buff = new Buffer(1);
+	//		Receiver r = new Receiver (buff);
+	//						
+	//		r.start();
+	//				
+	//		//r.interept();		
+	//	}
 }

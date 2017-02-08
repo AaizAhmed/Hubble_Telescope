@@ -14,54 +14,70 @@ package project5;
 public class Project5 {
 	
 	public static void main (String [] args) {
-		
-		System.out.println("Available processors (cores): " + 
-							Runtime.getRuntime().availableProcessors());
-		
-		System.out.println("Available memory (bytes): " + 
-				Runtime.getRuntime().freeMemory() + "\n");
-		
-		Buffer buf = new Buffer (); 
+
+	  int run = 1;
+	  System.out.println ("Available processors (cores): " + Runtime.getRuntime().availableProcessors());
+	  System.out.println ("Available memory (bytes): " + Runtime.getRuntime().freeMemory() + "\n");
+	  
+	  for (int x = 8; x < 9; x++) {
+			
+		Buffer buf = new Buffer (x); 
 		buf.start();
 		
 	    Satellite sat = new Satellite (buf);      
 	    sat.start();
-	    
-	    Receiver rec = new Receiver (buf, 256);		    
-	    rec.start();
-	    
-	    Processing process = new Processing ();
-
-	  int size, run = 1;
-	  
-	  for (int x = 8; x < 9; x++) {		
-		
-		size = (int) Math.pow(2, x);
-		
-		buf = new Buffer(x);
-		rec = new Receiver (buf, size*size);	    
-	    
-	    for (int y = 1; y < 3; y++) {	
+	 
+	    for (int y = 1; y < 2; y++) {	    
 	    	
-	     System.out.println("Run #" + run + ": i = " + x + ", j = " + y + ", N = " + size
-	    		 		  + ", B1 = " + size*size*2 + ", B2 = " + size*size + ", T = " + (int) Math.pow(10, y));
-	    	 
-	      try {	    	  
+	     Receiver rec = new Receiver (buf);		    
+	     rec.start();
+	      
+	      Processing process = new Processing ();
+	      
+	      try {
+	    	  
 	         // Wait for receiver to finish	         
 	         rec.join() ;	         
 
 	      } catch ( InterruptedException e ) {
 	         System.out.println("Oh look! an exception!") ;
-	      }      
+	      }  
+	      
+//	      System.out.println ("Before displaying Buffer 2 elements" );
+	      
+	      System.out.println ("Run #" + run + ": i=" + x + ",j=" + y + ",N=" + (int) Math.pow(2, x)+
+	    		               ",B1="+ buf.size() + ",B2=" + buf.size()/2 +",T=" + (int) Math.pow(10, y));
+	      
+	      if (rec.getBuffer().size() > 0) {
+	    	
+	      long t1 = System.currentTimeMillis();
+	      
+	      process.mergeSort (rec.getBuffer(), (int) Math.pow(10, y));
+	      long t2 = System.currentTimeMillis();
+	      System.out.println ("Time mergesort: "+ (t2-t1) +"ms");
+	      
+	      process.normalize(rec.getBuffer());	
+	      }
+	      
+	      /* To display the sorted values in the second buffer for testing
+	      for (int i = 0; i < process.normalized.size(); i++) {  
+	    	 
+	    	  System.out.println (rec.getB2().get(i) );  	 
+	    	  
+	      } */
+	      
+//	        System.out.println ("Yes Done!");
+//			System.out.println ("Normalized:\n");
 			
-			//process.createImage((int) Math.pow(2, x), (int) Math.pow(10, y)); //  Add T
-			System.out.println ("Image Created:\n");
-			run++;
+			process.createImage((int) Math.pow(2, x), (int) Math.pow(10, y)); 
+			
+//			System.out.println ("Image Created:\n");
+			System.out.println ("Saving image: output_N" + Math.pow(2, x) +"_T" + Math.pow(10, y) + ".jpg\n");
+			run++;			
 	    }
 	    		//Stopping/finishing the execution Satellite thread
 		         //sat.keepRunning = false;	       
-		         sat.interept();
-		         sat.stop();
+		         sat.stop(); 		         
 	  }
 	}
 

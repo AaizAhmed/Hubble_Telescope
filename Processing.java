@@ -30,7 +30,7 @@ public class Processing extends Thread {
 	 * @param list
 	 * @param limit
 	 */
-	public  void mergeSort(ArrayList<Integer> list , int limit) {
+	public void mergeSort(ArrayList<Integer> list , int limit) {
 
 		this.limit = limit;
 		int first = 0;
@@ -102,8 +102,8 @@ public class Processing extends Thread {
 		}
 	} 
 	
-	public void normalize (ArrayList<Integer> list) {
-		
+	public void normalize (ArrayList<Integer> list) 
+	{		
 	//	normalized = new ArrayList<Integer>();
 		int min = list.get(0);
 		int max = list.get(list.size() - 1);

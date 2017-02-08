@@ -24,21 +24,18 @@ public class Satellite extends Thread {
 	{		buff = b;
 	}
 
-	public void run() {
-		
-		while (keepRunning) 
+	public void run() 
+	{		
+		while (true) 
 		{
 			try 
 			{
 				if (!buff.isFull())
 				{
 					randomInt = rand.nextInt(4097);
-					buff.add( randomInt);
-				}
-				else
-				{
-					wait();
-				}			
+					//System.out.println("Adding: " + randomInt);
+					buff.add( randomInt );
+				}						
 			}
 			catch (InterruptedException e)
 			{

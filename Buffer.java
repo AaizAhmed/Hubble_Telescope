@@ -8,31 +8,29 @@
 package project5;
 import java.util.ArrayList;
 
-public class Buffer extends Thread {
-
+public class Buffer extends Thread 
+{
 	private ArrayList<Integer> B;	
 	private int N = 256, size = 2 * (N*N);  
 
 	/**
 	 * Default constructor, N = size	
 	 */
-	public Buffer () {
+//	public Buffer () 
+//	{	B = new ArrayList<Integer>(size);	}
 
-		B = new ArrayList<Integer>(size);
-
-	}
-
-	public Buffer (int i) {
-
-		N = (int) Math.pow(2, i);
-		size = 2 * (N*N);
+	public Buffer (int i) 
+	{
+//		N = (int) Math.pow(2, i);
+//		size = 2 * (N*N);
+		size = i;
 		B = new ArrayList<Integer>(size);		
 	}
 
-	public void run () {
-
-		try {			
-
+	public void run () 
+	{
+		try 
+		{
 			Thread.sleep(0); 			
 		}
 		catch (InterruptedException e) 
@@ -45,26 +43,31 @@ public class Buffer extends Thread {
 
 	synchronized public int elements() { return B.size(); }
 
-	synchronized public void add (int data) {
-
-		if (B.size() < size) { 
-
-			B.add (data);  
-			notify(); 
-		}
-
+	public synchronized void add (int data) throws InterruptedException 
+	{
+//		while (B.size() == size)
+//		{	wait();		}
+		System.out.println( "Adding in buff: " + data );
+		B.add (data);  
+		//notify();
 	}
 
-	synchronized public ArrayList<Integer> getBuffer () { return B; }
+	public synchronized ArrayList<Integer> getBuffer () 
+	{
+		System.out.println( B );
+		return B;
+	}
 
-	synchronized public void remove (int index) { 		
-
-		if (B.get(index) != null) {	
-
-			B.remove(index);  
-			notify();		
-		}  		
-
+	public synchronized void remove (int index) throws InterruptedException 
+	{
+		if ( B.size() >= size/2) notify();
+		
+		while(B.size() < size/2)
+		{	wait();		}
+		
+		if ( B.get(index) != null ) B.remove(index);  
+		//notify();		
+	  	
 	}	
 
 	synchronized public boolean isFull() {
@@ -74,37 +77,10 @@ public class Buffer extends Thread {
 		return false;
 	}
 
-	synchronized public boolean waitForData() {
-
-		try {
-
-			while ( B.size() < size/2 ) { wait(); System.out.print(B.size());return true; }
-		} 
-		catch ( InterruptedException e ) {
-
-			System.out.println("Hmm... an interrupt!") ;      
-		}
-		
-		return false;
-	}
-
 	synchronized public boolean isEmpty() {
 
 		return B.isEmpty() ;
 	}
-
-	synchronized public void waitForSpace() {
-
-		try {
-
-			while ( B.size() >= size ) wait() ;
-		} 
-		catch ( InterruptedException e ) {
-
-			System.out.println("Hmm... an interrupt!") ;      
-		}
-	}
-
 
 }
 
