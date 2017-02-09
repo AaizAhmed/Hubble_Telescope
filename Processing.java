@@ -111,10 +111,12 @@ public class Processing extends Thread {
 	 */
 	private void insertionSort(int[] subArray)
 	{
+		int j = 0, toCompare = 0;
+		
 		for (int i = 1; i < subArray.length; i++)
 		{
-			int toCompare = subArray[i];
-			int j = i;
+			toCompare = subArray[i];
+			j = i;
 			
 			while (j>0 && (subArray[j-1] > toCompare))
 			{
@@ -139,6 +141,59 @@ public class Processing extends Thread {
 			normalized.add(value);
 		}
 	}
+	
+	int [] array;
+	int length;
+	
+	  public void sort(int[] inputArr) {
+	         
+	        if (inputArr == null || inputArr.length == 0) {
+	            return;
+	        }
+	        this.array = inputArr;
+	        length = inputArr.length;
+	        quickSort(0, length - 1);
+	    }
+	 
+	    private void quickSort(int lowerIndex, int higherIndex) {
+	         
+	        int i = lowerIndex;
+	        int j = higherIndex;
+	        // calculate pivot number, I am taking pivot as middle index number
+	        int pivot = array[lowerIndex+(higherIndex-lowerIndex)/2];
+	        // Divide into two arrays
+	        while (i <= j) {
+	            /**
+	             * In each iteration, we will identify a number from left side which
+	             * is greater then the pivot value, and also we will identify a number
+	             * from right side which is less then the pivot value. Once the search
+	             * is done, then we exchange both numbers.
+	             */
+	            while (array[i] < pivot) {
+	                i++;
+	            }
+	            while (array[j] > pivot) {
+	                j--;
+	            }
+	            if (i <= j) {
+	                exchangeNumbers(i, j);
+	                //move index to next position on both sides
+	                i++;
+	                j--;
+	            }
+	        }
+	        // call quickSort() method recursively
+	        if (lowerIndex < j)
+	            quickSort(lowerIndex, j);
+	        if (i < higherIndex)
+	            quickSort(i, higherIndex);
+	    }
+	 
+	    private void exchangeNumbers(int i, int j) {
+	        int temp = array[i];
+	        array[i] = array[j];
+	        array[j] = temp;
+	    }
 
 	public void createImage(int N , int T) 
 	{
@@ -154,7 +209,7 @@ public class Processing extends Thread {
 		Random rand = new Random();
 		Processing proc = new Processing();
 
-		int N = 1024;		
+		int N = 1000000;		
 		int [] data = new int[N];
 		
 		for (int i = 0; i < N; i++) 
@@ -165,21 +220,32 @@ public class Processing extends Thread {
 		}   
 		System.out.println ("After filling the buffer:\n");
 
-		proc.mergeSort (data, 10);
-
+		long time = System.currentTimeMillis();											
+		proc.mergeSort (data, 100000);	
+		//proc.sort(data);
+		time = System.currentTimeMillis() - time;					
+		
+		System.out.println ("Time quicksort: "+ time +" ms");
+		
 		System.out.println ("After sort:\n");
 		for (int i = 0; i < N; i++) 
 		{
 			System.out.println ( data[i]);
 		} 
+		
+		//System.out.println ( data[N-1] );
 
-		proc.normalize(data);		
+		time = System.currentTimeMillis();
+		proc.normalize(data);	
+		time = System.currentTimeMillis() - time;		
+		System.out.println ("Time Normalize: "+ time +" ms");
+		
 		System.out.println ("Normalized:\n");		
 
-		for (int i = 0; i < proc.normalized.size(); i++) 
-		{
-			System.out.println ( proc.normalized.get(i));
-		} 
+//		for (int i = 0; i < proc.normalized.size(); i++) 
+//		{
+//			System.out.println ( proc.normalized.get(i));
+//		} 
 
 		System.out.println ("Image Created\n");
 		//proc.createImage(N, 100);
