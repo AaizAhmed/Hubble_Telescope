@@ -7,17 +7,17 @@
  */
 package project5;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.*;
 
 public class Processing extends Thread {
 
-	Buffer buf;
-	public ArrayList<Integer> data = new ArrayList<Integer>();;	
-	public ArrayList<Integer> normalized; 
+	Buffer buf;	
+	private ArrayList<Integer> normalized; 
 	private int limit;
 	ForkJoinPool manager = new ForkJoinPool();
-	
+
 	public boolean keepRunning ;
 
 	/**
@@ -27,27 +27,23 @@ public class Processing extends Thread {
 	{
 		normalized = new ArrayList<Integer>();
 	}
-	
+
 	/**
 	 * This method performs the merge sort algorithm.
 	 * @param list
 	 * @param limit
 	 */
-	public  void mergeSort(ArrayList<Integer> list , int limit) {
+	public void mergeSort(int[] array, int limit) {
 
 		this.limit = limit;
-		int first = 0;
-		int last = list.size();
-
-		if (last - first < limit) {  
-
-			insertionSort (list);
+		
+		if (array.length <= limit) 
+		{
+			insertionSort (array);
 			return;
-		}
-
-		ArrayList<Integer> tmpList = new ArrayList<Integer>(list.size());
-		manager.invoke(new SortTask(list, tmpList, first, last));		
-		manager.shutdown();
+		}		
+		
+		manager.invoke( new SortTask(array) );
 	}
 
 	/**
@@ -56,16 +52,11 @@ public class Processing extends Thread {
 	 */
 	private class SortTask extends RecursiveAction {
 
-		ArrayList<Integer> list;
-		ArrayList<Integer> tmpList;
-		int first, last;
+		int array[];
 
-		public SortTask(ArrayList<Integer> list2, ArrayList<Integer> tmp, int lo, int hi) {
-
-			this.list = list2;
-			this.tmpList = tmp;
-			this.first = lo;
-			this.last = hi;
+		public SortTask( int[] splitArray ) 
+		{
+			this.array = splitArray;	
 		}
 
 		/**
@@ -74,98 +65,83 @@ public class Processing extends Thread {
 		 */
 		protected void compute() {
 
-			if (last - first < limit)
-				insertionSort (list);
+			if (array.length <= limit)
+			{	insertionSort (array);	}
 
 			else {
-				int mid = (first + last) / 2; //System.out.println("I am in merge sort");
-				// the two recursive calls are replaced by a call to invokeAll
-				SortTask task1 = new SortTask(list, tmpList, first, mid);
-				SortTask task2 = new SortTask(list, tmpList, mid+1, last);
+				
+				int mid = this.array.length / 2; //System.out.println("I am in merge sort");
+				
+				int[] leftArray = Arrays.copyOfRange(array, 0, mid);
+				int[] rightArray = Arrays.copyOfRange(array, mid, array.length);
+				
+				SortTask task1 = new SortTask( leftArray );
+				SortTask task2 = new SortTask( rightArray );
 				invokeAll(task1, task2);				
 
-				merge(list, first, mid+1, last);			
-
+				merge(leftArray, rightArray, array);
 			}
 		}
 
-		private void merge(ArrayList<Integer>a, int beg, int middle, int end){
+		private void merge(int[] left, int[] right, int[] original)
+		{
+			int iLeft = 0;   // index into left array
+			int iRight = 0;   // index into right array
 
-			ArrayList<Integer> d=new ArrayList<Integer>(a.size());
-
-			int mid=middle+1; //start of second half of array
-
-			for(int i=0;i<d.size();i++){
-
-				if(beg<=middle && mid<=end){  
-
-					if(a.get(beg)<=a.get(mid)) {
-
-						d.set(i, a.get(beg));
-						beg++;
-					} 
-					else if(a.get(mid)<=a.get(beg)) {
-
-						d.set(i, a.get(mid));
-						mid++;
-					}
+			for (int i = 0; i < original.length; i++) 
+			{
+				if ( iRight >= right.length || (iLeft < left.length && left[iLeft] <= right[iRight]) ) 
+				{
+					original[i] = left[iLeft];    // take from left
+					iLeft++;
+				} 
+				else 
+				{
+					original[i] = right[iRight];   // take from right
+					iRight++;
 				}
-				else if(beg>middle) { 
-
-					d.set(i, a.get(mid));
-					mid++;
-				}
-				else if(mid==a.size()){
-
-					d.set(i, a.get(beg));
-					beg++;
-				}
-			}
-			for(int w=0; w<d.size(); w++){
-
-				a.set(w, d.get(w));
 			}
 		}
-	}	
+	}
+	//End of SortTask class.
 
 	/**
 	 * Simple insertion sort.
-	 * @param data2 an array of Comparable items.
+	 * @param subArray an array of integers.
 	 */
-	private static <AnyType extends Comparable<? super AnyType>>
-	void insertionSort( ArrayList<Integer> data2 )
+	private void insertionSort(int[] subArray)
 	{
-		int j;
-
-		for( int p = 1; p < data2.size(); p++ )
+		for (int i = 1; i < subArray.length; i++)
 		{
-			AnyType tmp = (AnyType) data2.get(p);
-			for( j = p; j > 0 && tmp.compareTo( (AnyType) data2.get(j - 1)  ) < 0; j-- )
-				data2.set(j , data2.get(j - 1) );
-			data2.set( j , (Integer) tmp );
+			int toCompare = subArray[i];
+			int j = i;
+			
+			while (j>0 && (subArray[j-1] > toCompare))
+			{
+				subArray[j] = subArray[j-1];
+				j--;
+			}
+			subArray[j] = toCompare;
 		}
-	} 
-
-	public void normalize (ArrayList<Integer> list) 
+	}
+	
+	public void normalize (int[] array) 
 	{
-		int min = list.get(0);
-		int max = list.get(list.size() - 1);
+		int min = array[0];
+		int max = array[array.length - 1];
 		int a = 0; int b = 255;
 
-		for ( int i = 0; i < list.size(); i++) {
+		for ( int i = 0; i < array.length; i++) 
+		{
+			int value = array[i]; 
+			value = (int) ( (b - a)*(value - min) ) / (max- min) + a;
 
-			int value = list.get(i); int index;
-
-			index = (int) ( (b - a)*(value - min) ) / (max- min) + a;
-
-			normalized.add(index);
-
-		}	
-
+			normalized.add(value);
+		}
 	}
 
-	public void createImage(int N , int T) {
-
+	public void createImage(int N , int T) 
+	{
 		String filename = String.format("output_image_N%d_T%d.jpg", N, T); // Add T
 		Image.save_image(normalized, N, filename);
 	}
@@ -178,24 +154,26 @@ public class Processing extends Thread {
 		Random rand = new Random();
 		Processing proc = new Processing();
 
-		int N = 1024;
-		for (int i = 0; i < N*N; i++) {
-
+		int N = 1024;		
+		int [] data = new int[N];
+		
+		for (int i = 0; i < N; i++) 
+		{
 			int temp = rand.nextInt(4097);
-			proc.data.add(temp);
+			data[i] = temp;
 			//System.out.println (proc.data.get(i));		
 		}   
 		System.out.println ("After filling the buffer:\n");
 
-		proc.mergeSort (proc.data, 10);
+		proc.mergeSort (data, 10);
 
 		System.out.println ("After sort:\n");
-		//		for (int i = 0; i < N*N; i++) {    		
-		//
-		//			System.out.println ( proc.data.get(i));
-		//		} 
+		for (int i = 0; i < N; i++) 
+		{
+			System.out.println ( data[i]);
+		} 
 
-		proc.normalize(proc.data);		
+		proc.normalize(data);		
 		System.out.println ("Normalized:\n");		
 
 		//		for (int i = 0; i < proc.normalized.size(); i++) {

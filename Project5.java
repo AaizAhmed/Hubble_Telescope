@@ -33,8 +33,7 @@ public class Project5 {
 				Receiver rec = new Receiver (buf);	
 				
 				long timeD = System.currentTimeMillis();			
-				rec.start();			
-				
+				rec.start();				
 				
 				Processing process = new Processing ();
 
@@ -53,27 +52,18 @@ public class Project5 {
 				System.out.printf("Run #%d, i=%d, j=%d, N=%d, B1=%d, B2=%d, T=%d\n", run, x, y, 
 						(int) Math.pow(2, x), buf.size(), buf.size()/2, (int) Math.pow(10, y));
 
-				if (rec.getB2().size() > 0) 
+				if (rec.getBuffer().length > 0) 
 				{
-					long time = System.currentTimeMillis();					
-					process.mergeSort (rec.getB2(), (int) Math.pow(10, y));						
+					long time = System.currentTimeMillis();		
+										
+					process.mergeSort (rec.getBuffer(), (int) Math.pow(10, y));						
 					time = System.currentTimeMillis() - time;					
 					System.out.println ("Time mergesort: "+ time +" ms");
 
-					process.normalize(rec.getB2());	
+					process.normalize (rec.getBuffer());	
 				}
 
-				/* To display the sorted values in the second buffer for testing
-	      for (int i = 0; i < process.normalized.size(); i++) {  
-
-	    	  System.out.println (rec.getB2().get(i) );  	 
-
-	      } */
-
-				//	        System.out.println ("Yes Done!");
-				//			System.out.println ("Normalized:\n");
-
-				//process.createImage((int) Math.pow(2, x), (int) Math.pow(10, y)); 
+				process.createImage((int) Math.pow(2, x), (int) Math.pow(10, y)); 
 				
 				try 
 				{
@@ -83,16 +73,10 @@ public class Project5 {
 				{					
 					e.printStackTrace();
 				}
-				
-				//process.stop();
-				//process.keepRunning = false;
-				
+								
 				System.out.println ("Saving image: images/output_N" + Math.pow(2, x) +"_T" + Math.pow(10, y) + ".jpg\n");
 				run++;			
-			}
-
-			//Stopping the Satellite thread
-			//sat.keepRunning = false;				
+			}				
 		}
 		
 		System.out.println("Do I run?");

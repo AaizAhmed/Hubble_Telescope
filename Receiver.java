@@ -11,17 +11,17 @@ import java.util.ArrayList;
 public class Receiver extends Thread {
 
 	Buffer buf;
-	private ArrayList<Integer> B2;	
+	private int[] B2;	
 	public boolean keepRunning ;
 
 	/**
 	 * Constructor: 
 	 * @param buffer
 	 */
-	public Receiver (Buffer b) {
-
+	public Receiver (Buffer b) 
+	{
 		buf = b;
-		B2 = new ArrayList<Integer> ();
+		B2 = new int[ buf.size()/2 ];
 	}
 
 	public void run () {		
@@ -30,8 +30,8 @@ public class Receiver extends Thread {
 
 			keepRunning = true;
 
-			while (keepRunning) {		
-
+			while (keepRunning) 
+			{
 				buf.waitForData(); 			
 
 				if (buf.isFull() ) 
@@ -39,7 +39,7 @@ public class Receiver extends Thread {
 					removeB1(); 
 					keepRunning = false;				
 				}
-
+				
 				Thread.sleep(0);
 			}
 
@@ -60,12 +60,12 @@ public class Receiver extends Thread {
 		{
 			int number = buf.getBuffer().get(i);
 			buf.remove(i);
-			B2.add(number);
+			B2[i] = number;
 
 			//System.out.println("Buffer element at " + i + " is " + buf.getBuffer().get(i));				
 
 		}		
 	}
 
-	public ArrayList<Integer> getB2 () { return B2; }
+	public int[] getBuffer () { return B2; }
 }
