@@ -14,7 +14,7 @@ import java.util.* ;
 public class Image {
 	
    /* Save image from an Integer buffer (assues integers are between [0-255]) */
-   public static int save_image(ArrayList<Integer> buffer, int N, String filename){
+   public static int save_image(LinkedList<Integer> buffer, int N, String filename){
 	   
          int width = N;
          int height = N;

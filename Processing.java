@@ -6,15 +6,16 @@
  * @section 01
  */
 package project5;
-import java.util.ArrayList;
+
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.*;
 
 public class Processing extends Thread {
 
 	Buffer buf;	
-	private ArrayList<Integer> normalized; 
+	private LinkedList<Integer> normalized; 
 	private int limit;
 	ForkJoinPool manager = new ForkJoinPool();
 
@@ -25,7 +26,7 @@ public class Processing extends Thread {
 	 */
 	public Processing () 
 	{
-		normalized = new ArrayList<Integer>();
+		normalized = new LinkedList<Integer>();
 	}
 
 	/**
@@ -50,6 +51,7 @@ public class Processing extends Thread {
 	 * Inner class to implement fork/join
 	 * @author Aaiz N Ahmed.
 	 */
+	@SuppressWarnings("serial")
 	private class SortTask extends RecursiveAction {
 
 		int array[];

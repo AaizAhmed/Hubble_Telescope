@@ -6,30 +6,23 @@
  * @section 01
  */
 package project5;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Buffer extends Thread {
 
-	private ArrayList<Integer> B;	
-	private int N = 256, size = 2 * (N*N);  
+	private LinkedList<Integer> B;	
+	private int size;  
 
-	/**
-	 * Default constructor, N = size	
-	 */
-	public Buffer () 
+	public Buffer (int i) 
 	{
-		B = new ArrayList<Integer>(size);
-	}
-
-	public Buffer (int i) {
-
-		N = (int) Math.pow(2, i);
+		int N = (int) Math.pow(2, i);
 		size = 2 * (N*N);
-		B = new ArrayList<Integer>(size);		
+		
+		B = new LinkedList<Integer>();		
 	}
 
-	public void run () {
-
+	public void run () 
+	{
 		try 
 		{
 			Thread.sleep(0); 			
@@ -53,16 +46,18 @@ public class Buffer extends Thread {
 		}		
 	}
 
-	public synchronized ArrayList<Integer> getBuffer () { return B; }
+	//public synchronized LinkedList<Integer> getBuffer () { return B; }
 
-	public synchronized void remove (int index) 
+	@SuppressWarnings("null")
+	public synchronized int remove () 
 	{
-		if (B.get(index) != null) 
-		{
-			//B.set(index, null); 
-			B.remove(index);
-			notify();		
-		} 
+		if (B.remove() != null) 
+		{		
+			notify();
+			return B.remove();
+					
+		}
+		return (Integer) null; 
 	}	
 
 	public synchronized boolean isFull() {

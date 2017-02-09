@@ -15,20 +15,18 @@ public class Project5 {
 		System.out.println ("Available processors (cores): " + Runtime.getRuntime().availableProcessors());
 		System.out.println ("Available memory (bytes): " + Runtime.getRuntime().freeMemory() + "\n");
 
-		for (int x = 9; x < 10; x++) {
+		for (int x = 8; x < 12; x++) {
 
 			Buffer buf = new Buffer (x); 
 			buf.start();
 
-			Satellite sat = new Satellite (buf);
-			
-			long timeA = System.currentTimeMillis();			
+			Satellite sat = new Satellite (buf);			
 			sat.start();			
-			timeA = System.currentTimeMillis() - timeA;			
-			System.out.println ("Time adding: "+ timeA +" ms");
 			
-
-			for (int y = 1; y < 6; y++) {	    
+			for (int y = 1; y < 6; y++) {
+				
+				System.out.printf("Run #%d, i=%d, j=%d, N=%d, B1=%d, B2=%d, T=%d\n", run, x, y, 
+						(int) Math.pow(2, x), buf.size(), buf.size()/2, (int) Math.pow(10, y));
 
 				Receiver rec = new Receiver (buf);	
 				
@@ -47,10 +45,7 @@ public class Project5 {
 				catch (InterruptedException e ) 
 				{
 					System.out.println("Thread Interrupted: " + e.getMessage() );
-				}				
-
-				System.out.printf("Run #%d, i=%d, j=%d, N=%d, B1=%d, B2=%d, T=%d\n", run, x, y, 
-						(int) Math.pow(2, x), buf.size(), buf.size()/2, (int) Math.pow(10, y));
+				}					
 
 				if (rec.getBuffer().length > 0) 
 				{

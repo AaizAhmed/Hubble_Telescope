@@ -6,7 +6,6 @@
  * @section 01
  */
 package project5;
-import java.util.ArrayList;
 
 public class Receiver extends Thread {
 
@@ -54,16 +53,14 @@ public class Receiver extends Thread {
 	/**
 	 * Adding the data to the 2nd buffer and removing from the first one.
 	 */
-	public void removeB1 () {		
-
+	public void removeB1 () 
+	{
 		for (int i = 0; i < buf.size()/2; i++) 
 		{
-			int number = buf.getBuffer().get(i);
-			buf.remove(i);
+			int number = buf.remove();			
 			B2[i] = number;
 
-			//System.out.println("Buffer element at " + i + " is " + buf.getBuffer().get(i));				
-
+			//System.out.println("Buffer element at " + i + " is " + buf.getBuffer().get(i));
 		}		
 	}
 

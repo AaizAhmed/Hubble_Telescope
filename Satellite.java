@@ -7,9 +7,7 @@
  */
 package project5;
 
-import java.awt.*;
 import java.util.Random;
-import javax.swing.*;
 
 public class Satellite extends Thread {	
 
@@ -22,8 +20,8 @@ public class Satellite extends Thread {
 	 * Constructor: Builds up the object.
 	 * @param buffer
 	 */
-	Satellite (Buffer b) {			
-
+	Satellite (Buffer b) 
+	{
 		B1 = b;
 	}
 
@@ -37,7 +35,7 @@ public class Satellite extends Thread {
 			{ 
 				B1.waitForSpace() ;
 				randomInt = rand.nextInt(4097);
-				B1.add( randomInt);
+				B1.add( randomInt );
 				
 				//System.out.println("Inside Satellite: " + randomInt);						
 
