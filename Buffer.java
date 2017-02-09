@@ -8,8 +8,8 @@
 package project5;
 import java.util.LinkedList;
 
-public class Buffer extends Thread {
-
+public class Buffer extends Thread 
+{
 	private LinkedList<Integer> B;	
 	private int size;  
 
@@ -31,11 +31,10 @@ public class Buffer extends Thread {
 		{ 		          
 			System.out.println(  "Buffer thread is interepted when it is  sleeping.\n" + e.getMessage() ); 
 		} 
-	} 
+	}
 
-	public synchronized int size () { return size; }
-
-	public synchronized int elements() { return B.size(); }
+	public synchronized int size () 
+	{ return size; }
 
 	public synchronized void add (int data) 
 	{
@@ -44,9 +43,7 @@ public class Buffer extends Thread {
 			B.add (data);
 			notify();
 		}		
-	}
-
-	//public synchronized LinkedList<Integer> getBuffer () { return B; }
+	}	
 
 	@SuppressWarnings("null")
 	public synchronized int remove () 
@@ -54,48 +51,39 @@ public class Buffer extends Thread {
 		if (B.remove() != null) 
 		{		
 			notify();
-			return B.remove();
-					
+			return B.remove();					
 		}
 		return (Integer) null; 
 	}	
 
-	public synchronized boolean isFull() {
-
-		if (B.size() >= size) { return true; }
-
-		return false;
-	}
+	public synchronized boolean isFull() 
+	{	return B.size() >= size;	}
 	
-	public synchronized boolean isEmpty() {
+	public synchronized boolean isEmpty() 
+	{	return B.isEmpty() ;	}
 
-		return B.isEmpty() ;
-	}
-
-	public synchronized void waitForData() {
-
+	public synchronized void waitForData() 
+	{
 		try 
 		{
-			while ( B.size() < size/2 ) wait()  ;
+			while ( B.size() < size/2 ) wait();
 		} 
-		catch ( InterruptedException e ) {
-
-			System.out.println("Hmm... an interrupt!") ;      
+		catch ( InterruptedException e ) 
+		{
+			System.out.println("Hmm... an interrupt!");      
 		}
 	}	
 
-	public synchronized void waitForSpace() {
-
+	public synchronized void waitForSpace() 
+	{
 		try 
 		{
-			while ( B.size() >= size ) wait() ;
+			while ( B.size() >= size ) wait();
 		} 
-		catch ( InterruptedException e ) {
-
-			System.out.println("Hmm... an interrupt!") ;      
+		catch ( InterruptedException e ) 
+		{
+			System.out.println("Hmm... an interrupt!");      
 		}
 	}
-
-
 }
 

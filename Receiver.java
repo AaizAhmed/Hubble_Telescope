@@ -7,11 +7,11 @@
  */
 package project5;
 
-public class Receiver extends Thread {
-
+public class Receiver extends Thread 
+{
 	Buffer buf;
 	private int[] B2;	
-	public boolean keepRunning ;
+	private boolean keepRunning ;
 
 	/**
 	 * Constructor: 
@@ -41,11 +41,9 @@ public class Receiver extends Thread {
 				
 				Thread.sleep(0);
 			}
-
-			//System.out.println("Finished Receiver: \n");
 		}
-		catch (InterruptedException e) {
-
+		catch (InterruptedException e) 
+		{
 			System.out.println("Receiver thread interepted while sleepying.\n" + e.getMessage());
 		} 
 	}
@@ -53,14 +51,12 @@ public class Receiver extends Thread {
 	/**
 	 * Adding the data to the 2nd buffer and removing from the first one.
 	 */
-	public void removeB1 () 
+	private void removeB1 () 
 	{
 		for (int i = 0; i < buf.size()/2; i++) 
 		{
 			int number = buf.remove();			
 			B2[i] = number;
-
-			//System.out.println("Buffer element at " + i + " is " + buf.getBuffer().get(i));
 		}		
 	}
 

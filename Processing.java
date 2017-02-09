@@ -19,8 +19,6 @@ public class Processing extends Thread {
 	private int limit;
 	ForkJoinPool manager = new ForkJoinPool();
 
-	public boolean keepRunning ;
-
 	/**
 	 * Constructor:
 	 */
@@ -34,8 +32,8 @@ public class Processing extends Thread {
 	 * @param list
 	 * @param limit
 	 */
-	public void mergeSort(int[] array, int limit) {
-
+	public void mergeSort(int[] array, int limit) 
+	{
 		this.limit = limit;
 		
 		if (array.length <= limit) 
@@ -52,8 +50,8 @@ public class Processing extends Thread {
 	 * @author Aaiz N Ahmed.
 	 */
 	@SuppressWarnings("serial")
-	private class SortTask extends RecursiveAction {
-
+	private class SortTask extends RecursiveAction 
+	{
 		int array[];
 
 		public SortTask( int[] splitArray ) 
@@ -65,14 +63,14 @@ public class Processing extends Thread {
 		 * This method keeps dividing the problem until it can be
 		 * passed to the insertSort. 
 		 */
-		protected void compute() {
-
+		protected void compute() 
+		{
 			if (array.length <= limit)
 			{	insertionSort (array);	}
 
 			else {
 				
-				int mid = this.array.length / 2; //System.out.println("I am in merge sort");
+				int mid = this.array.length / 2; 
 				
 				int[] leftArray = Arrays.copyOfRange(array, 0, mid);
 				int[] rightArray = Arrays.copyOfRange(array, mid, array.length);
@@ -178,10 +176,10 @@ public class Processing extends Thread {
 		proc.normalize(data);		
 		System.out.println ("Normalized:\n");		
 
-		//		for (int i = 0; i < proc.normalized.size(); i++) {
-		//		  
-		//			System.out.println ( proc.normalized.get(i));
-		//		} 
+		for (int i = 0; i < proc.normalized.size(); i++) 
+		{
+			System.out.println ( proc.normalized.get(i));
+		} 
 
 		System.out.println ("Image Created\n");
 		//proc.createImage(N, 100);
